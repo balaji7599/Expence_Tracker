@@ -13,6 +13,7 @@ function Register() {
     confirmPassword: "",
     mobile: "",
   });
+  
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -49,7 +50,7 @@ function Register() {
         mobile: "",
       });
     } catch (error) {
-      if (error.response?.status === 409) {
+      if (error.response?.status === 400) {
         toast.error(error.response.data.message);
       } else {
         toast.error("Something went wrong");
