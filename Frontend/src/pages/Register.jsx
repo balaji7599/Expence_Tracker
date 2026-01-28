@@ -13,16 +13,66 @@ function Register() {
     confirmPassword: "",
     mobile: "",
   });
-  
-
+  const [error, setError] = useState({});
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+
+    if (error[n]) {
+      setError({ ...error, [n]: "" });
+    }
+  };
+
+  const validateForm = () => {
+    const newError = {};
+
+    if (!form.name.trim()) {
+      newError.name = "Name is required";
+    } else if (form.name.length < 3) {
+      newError.name = "Name must be at least 3 characters";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!form.email) {
+      newError.email = "Email is required";
+    } else if (!emailRegex.test(form.email)) {
+      newError.email = "Invalid email format";
+    }
+
+    const mobileRegex = /^[0-9]{10}$/;
+    if (!form.mobile) {
+      newError.mobile = "Mobile number is required";
+    } else if (!mobileRegex.test(form.mobile)) {
+      newError.mobile = "Mobile number must be 10 digits";
+    }
+
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,12}$/;
+
+    if (!form.password) {
+      newError.password = "Password is required";
+    } else if (!passwordRegex.test(form.password)) {
+      newError.password =
+        "Password must be 8–12 chars, 1 uppercase, 1 number & 1 special char";
+    }
+
+    if (form.password !== form.confirmPassword) {
+      newError.confirmPassword = "Passwords do not match";
+    }
+
+    setError(newError);
+    return Object.keys(newError).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.password !== form.confirmPassword) {
+    {
+      /*(if (form.password !== form.confirmPassword) {
       toast.error("Passwords do not match");
+      return;
+    }*/
+    }
+    if (!validateForm()) {
+      toast.error("Filling all fields are mandotary");
       return;
     }
 
@@ -34,7 +84,7 @@ function Register() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       console.log("Response:", res.data);
@@ -75,23 +125,42 @@ function Register() {
                       className="form-control form-control-lg"
                       value={form.name}
                       onChange={handleChange}
-                      required
                     />
                     <label className="form-label">Full Name</label>
+                    <br />
+                    {error.name && (
+                      <small className="text-danger">{error.name}</small>
+                    )}
                   </div>
 
                   <div className="form-outline mb-4">
                     <input
-                      type="email"
+                      type="text"
                       name="email"
                       className="form-control form-control-lg"
                       value={form.email}
                       onChange={handleChange}
-                      required
                     />
                     <label className="form-label">Email</label>
+                    <br />
+                    {error.email && (
+                      <small className="text-danger">{error.email}</small>
+                    )}
                   </div>
-
+                  <div className="form-outline mb-4">
+                    <input
+                      type="text"
+                      name="mobile"
+                      className="form-control form-control-lg"
+                      value={form.mobile}
+                      onChange={handleChange}
+                    />
+                    <label className="form-label">Mobile Number</label>
+                    <br />
+                    {error.mobile && (
+                      <small className="text-danger">{error.mobile}</small>
+                    )}
+                  </div>
                   <div className="form-outline mb-4">
                     <input
                       type="password"
@@ -99,9 +168,12 @@ function Register() {
                       className="form-control form-control-lg"
                       value={form.password}
                       onChange={handleChange}
-                      required
                     />
                     <label className="form-label">Password</label>
+                    <br />
+                    {error.password && (
+                      <small className="text-danger">{error.password}</small>
+                    )}
                   </div>
                   <div className="form-outline mb-4">
                     <input
@@ -110,21 +182,8 @@ function Register() {
                       className="form-control form-control-lg"
                       value={form.confirmPassword}
                       onChange={handleChange}
-                      required
                     />
                     <label className="form-label">Confirm Password</label>
-                  </div>
-
-                  <div className="form-outline mb-4">
-                    <input
-                      type="text"
-                      name="mobile"
-                      className="form-control form-control-lg"
-                      value={form.mobile}
-                      onChange={handleChange}
-                      required
-                    />
-                    <label className="form-label">Mobile Number</label>
                   </div>
 
                   <button
