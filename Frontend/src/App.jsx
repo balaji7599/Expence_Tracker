@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
@@ -8,16 +9,24 @@ import Layout from "./Layout";
 import Home from "./pages/Home";
 import { ToastContainer, toast } from "react-toastify";
 import ProtectedRoute from "./components/Protectedroutes";
+import { Premium } from "./components/Premium";
 function App() {
+const [isPremium, setIsPremium] = useState(
+    localStorage.getItem("isPremium") === "true"
+  );
+
+
+
   return (
     <>
       <ToastContainer />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
+          <Route path="/" element={<Layout isPremium={isPremium}/>}>
             <Route index element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/home" element={<ProtectedRoute><Home/></ProtectedRoute>} /> {/*protected route*/}
+            <Route path="/home" element={<ProtectedRoute><Home isPremium={isPremium}/></ProtectedRoute>} /> {/*protected route*/}
+            <Route path="/premium" element={<ProtectedRoute><Premium setIsPremium={setIsPremium}/></ProtectedRoute>} />
           </Route>
         </Routes>
       </BrowserRouter>

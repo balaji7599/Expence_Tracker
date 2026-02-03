@@ -109,15 +109,22 @@ const userLogin = async (req, res) => {
 
     // 🔴 TOKEN (unchanged)
     const token = jwt.sign(
-      { id: user._id },
-      process.env.SECRET_KEY,
-      { expiresIn: "1d" }
-    );
+  { id: user._id },
+  process.env.SECRET_KEY,
+  { expiresIn: "1d" }
+);
 
-    return res.status(200).json({
-      message: "Login successful",
-      token
-    });
+return res.status(200).json({
+  message: "Login successful",
+  token,
+  user: {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    isPremium: user.isPremium, 
+  },
+});
+
 
   } catch (error) {
     console.log("error", error);
@@ -128,4 +135,44 @@ const userLogin = async (req, res) => {
   }
 };
 
-module.exports = { userRegister, userLogin };
+const userPremium = async (req, res) => {
+  try {
+    const userId = req.userId; // coming from auth middleware
+console.log("########");
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // find user
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // already premium (optional check)
+    if (user.isPremium) {
+      return res.status(200).json({
+        message: "User already premium",
+        isPremium: true,
+      });
+    }
+
+    // update premium
+    user.isPremium = true;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Premium enabled successfully",
+      isPremium: true,
+    });
+
+  } catch (error) {
+    console.error("Premium error:", error);
+    return res.status(500).json({
+      message: "Failed to enable premium",
+    });
+  }
+};
+
+module.exports = { userRegister, userLogin ,userPremium};

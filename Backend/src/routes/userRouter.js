@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { userRegister, userLogin } = require("../controller/userController");
+const { userRegister, userLogin,userPremium } = require("../controller/userController");
 const {
   addExpense,
   viewExpense,
@@ -9,6 +9,8 @@ const {
 } = require("../controller/expenseController");
 const { authMiddleware } = require("../middleware/authMiddleware");
 const upload = require("../middleware/imgUpload");
+const checkPremium = require("../middleware/checkPremium");
+
 
 router.post("/register", userRegister);
 router.post("/login", userLogin);
@@ -38,6 +40,7 @@ router.post("/createexpense", authMiddleware, (req, res) => {
 
 router.get("/viewexpense", authMiddleware, viewExpense);
 router.put("/edit/:id", authMiddleware, editExpense);
-router.delete("/deleteexpense/:id", authMiddleware, deleteExpense);
+router.patch("/premium",authMiddleware,userPremium);
+router.delete("/deleteexpense/:id", authMiddleware,checkPremium ,deleteExpense);
 
 module.exports = router;

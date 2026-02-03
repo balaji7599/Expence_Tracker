@@ -19,11 +19,11 @@ const Login = () => {
       });
 
       console.log("Response:", res.data);
-      localStorage.setItem("token","Bearer "+res.data.token);
+      localStorage.setItem("token", "Bearer " + res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       toast.success("Login successful");
       navigate("/home");
-    }
-     catch (err) {
+    } catch (err) {
       console.error(err);
 
       if (err.response?.status === 401) {

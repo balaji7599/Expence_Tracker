@@ -19,16 +19,20 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    loginAttempts: { 
-      type: Number, 
-      default: 0 
+    isPremium: {
+      type: Boolean,
+      default: false,
     },
-    lockUntil: { 
-      type: Date, 
-      default: null 
-    }
+    loginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lockUntil: {
+      type: Date,
+      default: null,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("user", userSchema, "user");

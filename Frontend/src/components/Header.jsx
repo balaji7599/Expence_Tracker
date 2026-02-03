@@ -1,13 +1,18 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-function Header() {
+function Header({ isPremium }) {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     navigate("/"); // redirect to login
+  };
+
+  const handlePremium = () => {
+    navigate("/premium");
   };
 
   return (
@@ -17,19 +22,22 @@ function Header() {
           Expense Tracker
         </Link>
 
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        <div className="collapse navbar-collapse" id="navbarNav">
+        <div className="collapse navbar-collapse">
           <ul className="navbar-nav ms-auto">
             {token ? (
               <>
+                {/* SHOW ONLY FOR NON-PREMIUM USERS */}
+                {!isPremium && (
+                  <li className="nav-item">
+                    <button
+                      className="btn btn-warning ms-3"
+                      onClick={handlePremium}
+                    >
+                      Enable Premium
+                    </button>
+                  </li>
+                )}
+
                 <li className="nav-item">
                   <Link to="/home" className="nav-link">
                     Home
@@ -52,7 +60,6 @@ function Header() {
                     Register
                   </Link>
                 </li>
-
                 <li className="nav-item">
                   <Link to="/" className="nav-link">
                     Login

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Baseapi } from "../confic";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-function ExpenseList({ isSubmit }) {
+function ExpenseList({ isPremium, isSubmit }) {
   const [expenses, setExpenses] = useState([]);
 
   const [name, setName] = useState("");
@@ -18,6 +19,8 @@ function ExpenseList({ isSubmit }) {
   // edit modal
   const [showEdit, setShowEdit] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
+
+  const navigate = useNavigate();
 
   const fetchExpenses = async (page = 1) => {
     try {
@@ -41,8 +44,13 @@ function ExpenseList({ isSubmit }) {
       await Baseapi.delete(`/deleteexpense/${id}`);
       toast.success("Expense deleted");
       fetchExpenses(currentPage);
-    } catch (error) {
-      toast.error("Delete failed");
+    } catch (err) {
+      if (err.response?.status === 403) {
+        toast.error("Enable premium feature");
+        navigate("/premium");
+      } else {
+        toast.error("Delete failed");
+      }
     }
   };
 
@@ -54,7 +62,6 @@ function ExpenseList({ isSubmit }) {
   const handleUpdate = async () => {
     try {
       await Baseapi.put(`/edit/${selectedExpense._id}`, selectedExpense);
-
       toast.success("Expense updated");
       setShowEdit(false);
       fetchExpenses(currentPage);
@@ -68,9 +75,9 @@ function ExpenseList({ isSubmit }) {
       <div className="card shadow">
         <div className="card-body">
           <h4 className="text-center mb-4">Expense List</h4>
+
           {/* FILTER UI */}
           <div className="row mb-4 g-2">
-            {/* Name Search */}
             <div className="col-md-3">
               <input
                 type="text"
@@ -84,7 +91,6 @@ function ExpenseList({ isSubmit }) {
               />
             </div>
 
-            {/* Description Search */}
             <div className="col-md-3">
               <input
                 type="text"
@@ -98,7 +104,6 @@ function ExpenseList({ isSubmit }) {
               />
             </div>
 
-            {/* Category Filter */}
             <div className="col-md-2">
               <select
                 className="form-select"
@@ -117,7 +122,6 @@ function ExpenseList({ isSubmit }) {
               </select>
             </div>
 
-            {/* Date Filter */}
             <div className="col-md-2">
               <input
                 type="date"
@@ -130,7 +134,6 @@ function ExpenseList({ isSubmit }) {
               />
             </div>
 
-            {/* Clear Button */}
             <div className="col-md-2">
               <button
                 className="btn btn-outline-secondary w-100"
@@ -190,60 +193,20 @@ function ExpenseList({ isSubmit }) {
                     >
                       Edit
                     </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDelete(exp._id)}
-                    >
-                      Delete
-                    </button>
+
+                    {isPremium && (
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDelete(exp._id)}
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-
-          {/* PAGINATION */}
-          <nav className="d-flex justify-content-center mt-3">
-            <ul className="pagination">
-              <li className={`page-item ${currentPage === 1 && "disabled"}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                >
-                  Previous
-                </button>
-              </li>
-
-              {[...Array(totalPages)].map((_, index) => (
-                <li
-                  key={index}
-                  className={`page-item ${
-                    currentPage === index + 1 ? "active" : ""
-                  }`}
-                >
-                  <button
-                    className="page-link"
-                    onClick={() => setCurrentPage(index + 1)}
-                  >
-                    {index + 1}
-                  </button>
-                </li>
-              ))}
-
-              <li
-                className={`page-item ${
-                  currentPage === totalPages && "disabled"
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                >
-                  Next
-                </button>
-              </li>
-            </ul>
-          </nav>
 
           {/* EDIT MODAL */}
           {showEdit && (
