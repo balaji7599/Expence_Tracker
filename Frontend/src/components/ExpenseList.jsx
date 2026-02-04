@@ -25,7 +25,7 @@ function ExpenseList({ isPremium, isSubmit }) {
   const fetchExpenses = async (page = 1) => {
     try {
       const res = await Baseapi.get(
-        `/viewexpense?page=${page}&limit=${itemsPerPage}&name=${name}&description=${description}&category=${category}&date=${date}`
+        `/viewexpense?page=${page}&limit=${itemsPerPage}&name=${name}&description=${description}&category=${category}&date=${date}`,
       );
 
       setExpenses(res.data.data);
@@ -61,7 +61,17 @@ function ExpenseList({ isPremium, isSubmit }) {
 
   const handleUpdate = async () => {
     try {
-      await Baseapi.put(`/edit/${selectedExpense._id}`, selectedExpense);
+      const formData = new FormData();
+      formData.append("name", selectedExpense.name);
+      formData.append("description", selectedExpense.description);
+      formData.append("category", selectedExpense.category);
+      formData.append("date", selectedExpense.date);
+      
+      if (selectedExpense.newImage) {
+        formData.append("image", selectedExpense.newImage);
+      }
+      ///////////////
+      await Baseapi.put(`/edit/${selectedExpense._id}`, formData);
       toast.success("Expense updated");
       setShowEdit(false);
       fetchExpenses(currentPage);
@@ -254,6 +264,36 @@ function ExpenseList({ isPremium, isSubmit }) {
                           })
                         }
                       />
+                      <input
+                        type="date"
+                        className="form-control mb-2"
+                        value={selectedExpense.date?.slice(0, 10)}
+                        onChange={(e) =>
+                          setSelectedExpense({
+                            ...selectedExpense,
+                            date: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        type="file"
+                        className="form-control"
+                        accept="image/*"
+                        onChange={(e) =>
+                          setSelectedExpense({
+                            ...selectedExpense,
+                            newImage: e.target.files[0],
+                          })
+                        }
+                      />
+                      {selectedExpense.image && (
+                        <img
+                          src={`http://localhost:3000/uploads/${selectedExpense.image}`}
+                          alt="bill"
+                          className="mt-2"
+                          style={{ width: "80px" }}
+                        />
+                      )}
                     </div>
 
                     <div className="modal-footer">

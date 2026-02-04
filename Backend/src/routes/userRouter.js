@@ -39,7 +39,7 @@ router.post("/createexpense", authMiddleware, (req, res) => {
 });
 
 router.get("/viewexpense", authMiddleware, viewExpense);
-router.put("/edit/:id", authMiddleware, editExpense);
+router.put("/edit/:id", authMiddleware, upload.single("image"),editExpense);
 router.patch("/premium",authMiddleware,userPremium);
 router.delete("/deleteexpense/:id", authMiddleware,checkPremium ,deleteExpense);
 

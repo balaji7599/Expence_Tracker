@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path=require('path');
 const expenseModel = require("../model/expenseModel");
 
 const addExpense = async (req, res) => {
@@ -186,34 +188,44 @@ const editExpense = async (req, res) => {
     const { id } = req.params;
     const { name, description, category, date } = req.body;
 
-    const updatedExpense = await expenseModel.findOneAndUpdate(
-      {
-        _id: id,
-        userId: req.userId,
-      },
-      {
-        name,
-        description,
-        category,
-        date,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    // Find existing expense first
+    const expense = await expenseModel.findOne({
+      _id: id,
+      userId: req.userId,
+    });
 
-    if (!updatedExpense) {
+    if (!expense) {
       return res.status(404).json({
         success: false,
         message: "Expense not found or unauthorized",
       });
     }
 
+    // If new image uploaded → delete old one
+    if (req.file) {
+      if (expense.image) {
+        const oldImagePath = path.join("uploads", expense.image);
+
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath); //  remove old image
+        }
+      }
+
+      expense.image = req.file.filename; // save new image
+    }
+
+    // Update other fields
+    expense.name = name;
+    expense.description = description;
+    expense.category = category;
+    expense.date = date;
+
+    await expense.save();
+
     res.status(200).json({
       success: true,
       message: "Expense updated successfully",
-      data: updatedExpense,
+      data: expense,
     });
   } catch (error) {
     console.error("Edit Expense Error:", error);
