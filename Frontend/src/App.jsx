@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
+import IndexPage from "./pages/Idx";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -23,8 +24,9 @@ const [isPremium, setIsPremium] = useState(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout isPremium={isPremium}/>}>
-            <Route index element={<Login />} />
+            <Route index element={<IndexPage />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login/>}/>
             <Route path="/home" element={<ProtectedRoute><Home isPremium={isPremium}/></ProtectedRoute>} /> {/*protected route*/}
             <Route path="/premium" element={<ProtectedRoute><Premium setIsPremium={setIsPremium}/></ProtectedRoute>} />
           </Route>
