@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Baseapi } from "../confic";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:3000/api/user/login", {
+      const res = await Baseapi.post("/login", {
         email,
         password,
       });
