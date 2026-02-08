@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { Baseapi } from "../confic";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -77,8 +78,8 @@ function Register() {
     }
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/api/user/register",
+      const res = await Baseapi.post(
+        "/register",
         form,
         {
           headers: {
