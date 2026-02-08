@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const Baseapi = axios.create({
-  baseURL: "http://localhost:3000/api/user/"
+  baseURL: "https://expence-tracker-kcf2.onrender.com/api/user/"
 });
 
 Baseapi.interceptors.request.use((config) => {
