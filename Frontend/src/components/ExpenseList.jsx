@@ -183,7 +183,7 @@ function ExpenseList({ isPremium, isSubmit }) {
                   <td className="text-center">
                     {exp.image ? (
                       <img
-                        src={`http://localhost:3000/uploads/${exp.image}`}
+                        src={`${import.meta.env.VITE_BASE_URL}/uploads/${exp.image}`}
                         alt="bill"
                         style={{
                           width: "60px",
@@ -288,7 +288,7 @@ function ExpenseList({ isPremium, isSubmit }) {
                       />
                       {selectedExpense.image && (
                         <img
-                          src={`http://localhost:3000/uploads/${selectedExpense.image}`}
+                          src={`${import.meta.env.VITE_BASE_URL}/uploads/${selectedExpense.image}`}
                           alt="bill"
                           className="mt-2"
                           style={{ width: "80px" }}
